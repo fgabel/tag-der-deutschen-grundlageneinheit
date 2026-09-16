@@ -87,6 +87,14 @@
       padding: 0 1rem;
     }
     #profile { width: 100%; height: 140px; display: block; cursor: crosshair; }
+    .route-info {
+      text-align: center;
+      color: var(--muted);
+      font-size: .9rem;
+      margin: 0 auto 1rem;
+      padding: 0 1rem;
+    }
+    .route-info a { color: var(--accent2); }
     .hint {
       max-width: 960px;
       margin: .4rem auto 0;
@@ -159,10 +167,15 @@
     <div class="stat"><div class="value" id="st-date">03.10.2026</div><div class="label">Datum (Samstag)</div></div>
     <div class="stat"><div class="value" id="st-km">–</div><div class="label">Kilometer</div></div>
     <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
-    <div class="stat"><div class="value" id="st-max">–</div><div class="label">Höchster Punkt</div></div>
   </section>
 
   <div class="waypoints" id="waypoints"></div>
+
+  <p class="route-info">
+    Route: <em>Odenwald-Diplom</em> · Start/Ziel: Heidelberg
+    · <a href="https://www.strava.com/activities/15478495327" target="_blank" rel="noopener">Route auf Strava</a>
+    · <a href="assets/route.js">GPX-Daten (vereinfacht)</a>
+  </p>
 
   <div id="map"></div>
 
@@ -171,19 +184,12 @@
   </div>
   <p class="hint">Maus über Karte oder Höhenprofil bewegen, um die Position in der jeweils anderen Ansicht zu sehen.</p>
 
-    <footer>
-    Route: <em>Odenwald-Diplom</em> · Start/Ziel: Heidelberg
-    · <a href="https://www.strava.com/activities/15478495327" target="_blank" rel="noopener">Route auf Strava</a>
-    · <a href="assets/route.js">GPX-Daten (vereinfacht)</a>
-  </footer>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="assets/route.js"></script>
   <script>
     const S = window.ROUTE_STATS, R = window.ROUTE;
     document.getElementById('st-km').textContent = S.km.toLocaleString('de-DE') + ' km';
     document.getElementById('st-gain').textContent = S.gain.toLocaleString('de-DE') + ' m';
-    document.getElementById('st-max').textContent = S.maxEle.toLocaleString('de-DE') + ' m';
 
     // Map
     const lats = R.map(p => p[1]), lons = R.map(p => p[2]);
@@ -199,10 +205,10 @@
 
     // Supplies / stops along the route (km values from the track)
     const WAYPOINTS = [
-      { name: 'Haribo-Stash',           km: 48.8,  lat: 49.60967, lon: 8.91534 },
-      { name: 'Odenwälder Cafestube',   km: 88.0,  lat: 49.6314,  lon: 9.09851 },
-      { name: 'REWE Beerfelden',        km: 134.0, lat: 49.55558, lon: 8.94336 },
-      { name: 'Cafe Junghans',          km: 172.0, lat: 49.45378, lon: 8.7572 },
+      { name: 'Haribo-Stash',           km: 45.6,  lat: 49.59853, lon: 8.90072 },
+      { name: 'Odenwälder Cafestube',   km: 84.8,  lat: 49.64922, lon: 9.08088 },
+      { name: 'REWE Beerfelden',        km: 130.8, lat: 49.56988, lon: 8.9747 },
+      { name: 'Cafe Junghans',          km: 168.8, lat: 49.46474, lon: 8.76125 },
     ];
     const wpList = document.getElementById('waypoints');
     WAYPOINTS.forEach(wp => {
