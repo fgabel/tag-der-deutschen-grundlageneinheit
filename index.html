@@ -83,7 +83,25 @@
       margin: 1.5rem auto 0;
       padding: 0 1rem;
     }
-    #profile { width: 100%; height: 140px; display: block; }
+    #profile { width: 100%; height: 140px; display: block; cursor: crosshair; }
+    .hint {
+      max-width: 960px;
+      margin: .4rem auto 0;
+      padding: 0 1rem;
+      font-size: .8rem;
+      color: var(--muted);
+      text-align: center;
+    }
+    .hl-tip {
+      background: #101418;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      font: 11px system-ui, sans-serif;
+      padding: 2px 7px;
+      border-radius: 6px;
+      box-shadow: none;
+    }
+    .hl-tip::before { display: none; }
     footer {
       text-align: center;
       color: var(--muted);
@@ -112,6 +130,7 @@
   <div class="profile-wrap">
     <canvas id="profile" height="140"></canvas>
   </div>
+  <p class="hint">Maus über Karte oder Höhenprofil bewegen, um die Position in der jeweils anderen Ansicht zu sehen.</p>
 
   <footer>
     Route: <em>Odenwald-Diplom</em> · Start/Ziel: Heidelberg
@@ -138,30 +157,34 @@
     L.marker([start[1], start[2]]).addTo(map).bindTooltip('Start / Ziel');
     L.circleMarker([end[1], end[2]], { radius: 6, color: '#fff', fillColor: '#f2a71b', fillOpacity: 1 }).addTo(map);
 
-    // Elevation profile (plain canvas, no libs)
+    // Elevation profile (plain canvas, no libs) + cross-highlighting with the map
     const canvas = document.getElementById('profile');
     const dpr = window.devicePixelRatio || 1;
-    function draw() {
-      const w = canvas.clientWidth, h = 140;
-      canvas.width = w * dpr; canvas.height = h * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-      ctx.clearRect(0, 0, w, h);
-      const pad = { t: 10, b: 22, l: 4, r: 4 };
+    const base = document.createElement('canvas');   // cached background rendering
+    const PAD = { t: 10, b: 22, l: 4, r: 4 };
+    const CH = 140;
+    const totalKm = R[R.length - 1][0];
+    let CW = 0, hlIdx = null;
+
+    function renderBase() {
+      CW = canvas.clientWidth || CW;
+      base.width = CW * dpr; base.height = CH * dpr;
+      const ctx = base.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, CW, CH);
       const lo = S.minEle, hi = S.maxEle, span = hi - lo;
-      const gw = w - pad.l - pad.r, gh = h - pad.t - pad.b;
-      const totalKm = R[R.length - 1][0];
+      const gw = CW - PAD.l - PAD.r, gh = CH - PAD.t - PAD.b;
       // area
       ctx.beginPath();
-      ctx.moveTo(pad.l, pad.t + gh);
+      ctx.moveTo(PAD.l, PAD.t + gh);
       for (const p of R) {
-        const x = pad.l + (p[0] / totalKm) * gw;
-        const y = pad.t + gh - ((p[3] - lo) / span) * gh;
+        const x = PAD.l + (p[0] / totalKm) * gw;
+        const y = PAD.t + gh - ((p[3] - lo) / span) * gh;
         ctx.lineTo(x, y);
       }
-      ctx.lineTo(pad.l + gw, pad.t + gh);
+      ctx.lineTo(PAD.l + gw, PAD.t + gh);
       ctx.closePath();
-      const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + gh);
+      const grad = ctx.createLinearGradient(0, PAD.t, 0, PAD.t + gh);
       grad.addColorStop(0, 'rgba(58,167,109,.55)');
       grad.addColorStop(1, 'rgba(58,167,109,.05)');
       ctx.fillStyle = grad;
@@ -169,8 +192,8 @@
       // line
       ctx.beginPath();
       R.forEach((p, i) => {
-        const x = pad.l + (p[0] / totalKm) * gw;
-        const y = pad.t + gh - ((p[3] - lo) / span) * gh;
+        const x = PAD.l + (p[0] / totalKm) * gw;
+        const y = PAD.t + gh - ((p[3] - lo) / span) * gh;
         i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
       });
       ctx.strokeStyle = '#3aa76d';
@@ -180,12 +203,102 @@
       ctx.fillStyle = '#93a1af';
       ctx.font = '11px system-ui, sans-serif';
       ctx.textAlign = 'left';
-      ctx.fillText('0 km', pad.l, h - 6);
+      ctx.fillText('0 km', PAD.l, CH - 6);
       ctx.textAlign = 'right';
-      ctx.fillText(totalKm.toLocaleString('de-DE') + ' km', pad.l + gw, h - 6);
+      ctx.fillText(totalKm.toLocaleString('de-DE') + ' km', PAD.l + gw, CH - 6);
       ctx.textAlign = 'left';
-      ctx.fillText(hi + ' m', pad.l + 2, pad.t + 8);
+      ctx.fillText(hi + ' m', PAD.l + 2, PAD.t + 8);
     }
+
+    function draw() {
+      renderBase();
+      canvas.width = CW * dpr; canvas.height = CH * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, CW, CH);
+      ctx.drawImage(base, 0, 0, CW, CH);
+      if (hlIdx == null) return;
+      const p = R[hlIdx];
+      const gw = CW - PAD.l - PAD.r, gh = CH - PAD.t - PAD.b;
+      const x = PAD.l + (p[0] / totalKm) * gw;
+      const y = PAD.t + gh - ((p[3] - S.minEle) / (S.maxEle - S.minEle)) * gh;
+      // vertical guide line
+      ctx.strokeStyle = '#f2a71b';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 3]);
+      ctx.beginPath(); ctx.moveTo(x, PAD.t); ctx.lineTo(x, PAD.t + gh); ctx.stroke();
+      ctx.setLineDash([]);
+      // dot
+      ctx.beginPath(); ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = '#f2a71b'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+      // label
+      const label = p[0].toFixed(1).replace('.', ',') + ' km · ' + Math.round(p[3]) + ' m';
+      ctx.font = '11px system-ui, sans-serif';
+      const tw = ctx.measureText(label).width;
+      let lx = x + 6;
+      if (lx + tw > CW - 4) lx = x - tw - 6;
+      ctx.fillStyle = 'rgba(16,20,24,.85)';
+      ctx.fillRect(lx - 4, PAD.t + 1, tw + 8, 16);
+      ctx.fillStyle = '#e8edf2';
+      ctx.fillText(label, lx, PAD.t + 13);
+    }
+
+    // Shared map marker for the highlighted point (invisible until highlighted)
+    const hlMarker = L.circleMarker([R[0][1], R[0][2]], {
+      radius: 6, color: '#fff', weight: 2, fillColor: '#f2a71b', fillOpacity: 1, interactive: false
+    }).addTo(map);
+    hlMarker.bindTooltip('', { permanent: true, direction: 'top', offset: [0, -6], className: 'hl-tip' });
+    hlMarker.setStyle({ opacity: 0, fillOpacity: 0 });
+    hlMarker.closeTooltip();
+
+    function setHighlight(i) {
+      if (hlIdx === i) return;
+      hlIdx = i;
+      draw();
+      if (i == null) { hlMarker.closeTooltip(); return; }
+      const p = R[i];
+      hlMarker.setLatLng([p[1], p[2]]);
+      hlMarker.setTooltipContent(p[0].toFixed(1).replace('.', ',') + ' km · ' + Math.round(p[3]) + ' m');
+      hlMarker.openTooltip();
+    }
+
+    // Profile hover -> point on map
+    canvas.addEventListener('mousemove', e => {
+      const rect = canvas.getBoundingClientRect();
+      const frac = Math.min(1, Math.max(0, (e.clientX - rect.left - PAD.l) / (rect.width - PAD.l - PAD.r)));
+      const km = frac * totalKm;
+      // binary search for the nearest point by cumulative km
+      let lo = 0, hi = R.length - 1;
+      while (lo < hi) { const mid = (lo + hi) >> 1; if (R[mid][0] < km) lo = mid + 1; else hi = mid; }
+      if (lo > 0 && Math.abs(R[lo - 1][0] - km) < Math.abs(R[lo][0] - km)) lo--;
+      setHighlight(lo);
+    });
+    canvas.addEventListener('mouseleave', () => setHighlight(null));
+
+    // Map hover -> position in profile
+    let rafPending = false, lastLL = null;
+    map.on('mousemove', e => {
+      lastLL = e.latlng;
+      if (rafPending) return;
+      rafPending = true;
+      requestAnimationFrame(() => {
+        rafPending = false;
+        if (!lastLL) return;
+        const lat = lastLL.lat, cosLat = Math.cos(lat * Math.PI / 180);
+        let best = null, bestD = Infinity;
+        for (let i = 0; i < R.length; i++) {
+          const dLat = (R[i][1] - lat) * 111320;
+          const dLon = (R[i][2] - lastLL.lng) * 111320 * cosLat;
+          const d = dLat * dLat + dLon * dLon;
+          if (d < bestD) { bestD = d; best = i; }
+        }
+        // ignore cursors too far away from the track (> 600 m)
+        setHighlight(bestD <= 600 * 600 ? best : null);
+      });
+    });
+    map.on('mouseout', () => setHighlight(null));
+
     draw();
     window.addEventListener('resize', draw);
   </script>
