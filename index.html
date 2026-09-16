@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tag der deutschen Grundlageneinheit – Radtour 27.09. / 03.10.2026</title>
-  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 197,9 km und 4.149 Höhenmeter durch den Odenwald. Termin: 27.09. oder 03.10.2026 – je nach Wetter, Bekanntgabe 3 Tage vorher. Start 08:00 Uhr, ca. 8 h, Ø 25 km/h.">
+  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 197,9 km und 4.149 Höhenmeter durch den Odenwald. Termin: 27.09. oder 03.10.2026 – je nach Wetter. Start 08:00 Uhr, ca. 8 h.">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -164,12 +164,11 @@
   </header>
 
   <section class="stats">
-    <div class="stat"><div class="value">27.09. / 03.10.</div><div class="label">Datum · je nach Wetter, 3 Tage vorher bekanntgegeben</div></div>
+    <div class="stat"><div class="value">27.09. / 03.10.</div><div class="label">Datum · je nach Wetter</div></div>
     <div class="stat"><div class="value">08:00</div><div class="label">Startzeit</div></div>
     <div class="stat"><div class="value" id="st-km">–</div><div class="label">Kilometer</div></div>
     <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
     <div class="stat"><div class="value">~8 h</div><div class="label">Fahrzeit</div></div>
-    <div class="stat"><div class="value">25 km/h</div><div class="label">Ø Geschwindigkeit</div></div>
   </section>
 
   <div class="waypoints" id="waypoints"></div>
@@ -208,7 +207,7 @@
     L.marker([start[1], start[2]]).addTo(map).bindTooltip('Start / Ziel');
 
     // Unfold the route quickly on load (~3 s)
-    const unfoldMs = 3000;
+    const unfoldMs = 5000;
     const headDot = L.circleMarker(fullLL[0], {
       radius: 5, color: '#fff', weight: 2, fillColor: '#f2a71b', fillOpacity: 1, interactive: false
     }).addTo(map);
