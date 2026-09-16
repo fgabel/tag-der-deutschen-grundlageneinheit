@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag der deutschen Grundlageneinheit – Radtour 03.10.2026</title>
-  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 197,9 km und 4.149 Höhenmeter durch den Odenwald. Samstag, 3. Oktober 2026.">
+  <title>Tag der deutschen Grundlageneinheit – Radtour 27.09. / 03.10.2026</title>
+  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 197,9 km und 4.149 Höhenmeter durch den Odenwald. Termin: 27.09. oder 03.10.2026 – je nach Wetter, Bekanntgabe 3 Tage vorher. Start 08:00 Uhr, ca. 8 h, Ø 25 km/h.">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -164,9 +164,12 @@
   </header>
 
   <section class="stats">
-    <div class="stat"><div class="value" id="st-date">03.10.2026</div><div class="label">Datum (Samstag)</div></div>
+    <div class="stat"><div class="value">27.09. / 03.10.</div><div class="label">Datum · je nach Wetter, 3 Tage vorher bekanntgegeben</div></div>
+    <div class="stat"><div class="value">08:00</div><div class="label">Startzeit</div></div>
     <div class="stat"><div class="value" id="st-km">–</div><div class="label">Kilometer</div></div>
     <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
+    <div class="stat"><div class="value">~8 h</div><div class="label">Fahrzeit</div></div>
+    <div class="stat"><div class="value">25 km/h</div><div class="label">Ø Geschwindigkeit</div></div>
   </section>
 
   <div class="waypoints" id="waypoints"></div>
@@ -197,15 +200,48 @@
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       maxZoom: 18, attribution: '&copy; OpenStreetMap-Mitwirkende'
     }).addTo(map);
-    const line = L.polyline(R.map(p => [p[1], p[2]]), { color: '#f2a71b', weight: 3.5 }).addTo(map);
-    map.fitBounds(line.getBounds(), { padding: [24, 24] });
+    const fullLL = R.map(p => [p[1], p[2]]);
+    const line = L.polyline([], { color: '#f2a71b', weight: 3.5 }).addTo(map);
+    map.fitBounds(L.latLngBounds(fullLL), { padding: [24, 24] });
     const start = R[0], end = R[R.length - 1];
+    const endMarker = L.circleMarker([end[1], end[2]], { radius: 6, color: '#fff', fillColor: '#f2a71b', fillOpacity: 1 });
     L.marker([start[1], start[2]]).addTo(map).bindTooltip('Start / Ziel');
-    L.circleMarker([end[1], end[2]], { radius: 6, color: '#fff', fillColor: '#f2a71b', fillOpacity: 1 }).addTo(map);
+
+    // Unfold the route quickly on load (~3 s)
+    const unfoldMs = 3000;
+    const headDot = L.circleMarker(fullLL[0], {
+      radius: 5, color: '#fff', weight: 2, fillColor: '#f2a71b', fillOpacity: 1, interactive: false
+    }).addTo(map);
+    const unfoldT0 = performance.now();
+    let unfoldCursor = 0;
+    function unfoldFrame(now) {
+      const t = Math.min(1, (now - unfoldT0) / unfoldMs);
+      const e = 1 - Math.pow(1 - t, 3);           // ease-out cubic
+      const km = e * R[R.length - 1][0];
+      while (unfoldCursor < R.length - 1 && R[unfoldCursor + 1][0] <= km) unfoldCursor++;
+      const pts = fullLL.slice(0, unfoldCursor + 1);
+      // interpolate the head point between samples for a smooth tip
+      const a = R[unfoldCursor], b = R[Math.min(unfoldCursor + 1, R.length - 1)];
+      if (b[0] > a[0] && km > a[0] && km < b[0]) {
+        const f = (km - a[0]) / (b[0] - a[0]);
+        pts.push([a[1] + (b[1] - a[1]) * f, a[2] + (b[2] - a[2]) * f]);
+        headDot.setLatLng(pts[pts.length - 1]);
+      } else {
+        headDot.setLatLng(pts[pts.length - 1] || fullLL[0]);
+      }
+      line.setLatLngs(pts);
+      if (t < 1) {
+        requestAnimationFrame(unfoldFrame);
+      } else {
+        map.removeLayer(headDot);
+        endMarker.addTo(map);
+      }
+    }
+    requestAnimationFrame(unfoldFrame);
 
     // Supplies / stops along the route (km values from the track)
     const WAYPOINTS = [
-      { name: 'Haribo-Stash',           km: 45.6,  lat: 49.59853, lon: 8.90072 },
+      { name: 'Haribo-Lager',           km: 45.6,  lat: 49.59853, lon: 8.90072 },
       { name: 'Odenwälder Cafestube',   km: 84.8,  lat: 49.64922, lon: 9.08088 },
       { name: 'REWE Beerfelden',        km: 130.8, lat: 49.56988, lon: 8.9747 },
       { name: 'Cafe Junghans',          km: 168.8, lat: 49.46474, lon: 8.76125 },
