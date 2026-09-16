@@ -109,6 +109,38 @@
       padding: 2rem 1rem 3rem;
     }
     footer a { color: var(--accent2); }
+    .waypoints {
+      max-width: 960px;
+      margin: 0 auto 1rem;
+      padding: 0 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      justify-content: center;
+    }
+    .wp {
+      display: flex;
+      gap: .45rem;
+      align-items: baseline;
+      background: var(--card);
+      border-radius: 999px;
+      padding: .3rem .9rem;
+      font-size: .85rem;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+    .wp:hover { border-color: var(--accent); }
+    .wp .km { color: var(--accent); font-weight: 700; }
+    .wp-marker-label {
+      background: #101418;
+      border: 1px solid var(--accent);
+      color: var(--text);
+      font: 11px system-ui, sans-serif;
+      padding: 1px 6px;
+      border-radius: 6px;
+      box-shadow: none;
+    }
+    .wp-marker-label::before { display: none; }
   </style>
 </head>
 <body>
@@ -124,6 +156,8 @@
     <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
     <div class="stat"><div class="value" id="st-max">–</div><div class="label">Höchster Punkt</div></div>
   </section>
+
+  <div class="waypoints" id="waypoints"></div>
 
   <div id="map"></div>
 
@@ -156,6 +190,27 @@
     const start = R[0], end = R[R.length - 1];
     L.marker([start[1], start[2]]).addTo(map).bindTooltip('Start / Ziel');
     L.circleMarker([end[1], end[2]], { radius: 6, color: '#fff', fillColor: '#f2a71b', fillOpacity: 1 }).addTo(map);
+
+    // Supplies / stops along the route (km values from the track)
+    const WAYPOINTS = [
+      { name: 'Haribo-Stash',           km: 48.8,  lat: 49.59854, lon: 8.90079 },
+      { name: 'Odenwälder Cafestube',   km: 88.0,  lat: 49.64885, lon: 9.08085 },
+      { name: 'REWE Beerfelden',        km: 134.0, lat: 49.56951, lon: 8.97438 },
+      { name: 'Cafe Junghans',          km: 172.0, lat: 49.46423, lon: 8.76169 },
+    ];
+    const wpList = document.getElementById('waypoints');
+    WAYPOINTS.forEach(wp => {
+      L.circleMarker([wp.lat, wp.lon], {
+        radius: 5, color: '#fff', weight: 1.5, fillColor: '#3aa76d', fillOpacity: 1
+      }).addTo(map)
+        .bindTooltip(wp.name + ' · ' + wp.km.toLocaleString('de-DE') + ' km',
+                     { permanent: true, direction: 'right', offset: [8, 0], className: 'wp-marker-label' });
+      const chip = document.createElement('span');
+      chip.className = 'wp';
+      chip.innerHTML = '<span class="km">' + wp.km.toLocaleString('de-DE') + ' km</span> ' + wp.name;
+      chip.addEventListener('click', () => map.flyTo([wp.lat, wp.lon], 15, { duration: 1 }));
+      wpList.appendChild(chip);
+    });
 
     // Elevation profile (plain canvas, no libs) + cross-highlighting with the map
     const canvas = document.getElementById('profile');
