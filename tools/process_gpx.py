@@ -5,7 +5,8 @@ import re
 import json
 import sys
 
-SRC = "/home/frank/Downloads/Odenwald_Diplom_.gpx"
+import glob
+SRC = glob.glob("/home/frank/Downloads/Odenwald*Diplom.gpx")[0]
 DST = "assets/route.js"
 MIN_STEP_M = 40.0        # keep one point every ~40 m
 ELE_NOISE_M = 2.0        # elevation gain threshold to suppress GPS noise

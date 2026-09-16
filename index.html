@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Tag der deutschen Grundlageneinheit – Radtour 03.10.2026</title>
-  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 198,7 km und 4.024 Höhenmeter durch den Odenwald. Samstag, 3. Oktober 2026.">
+  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 197,9 km und 4.149 Höhenmeter durch den Odenwald. Samstag, 3. Oktober 2026.">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -27,17 +27,20 @@
       text-align: center;
       padding: 3rem 1rem 2rem;
     }
-    header .badge {
-      display: inline-block;
-      background: var(--accent);
-      color: #111;
-      font-weight: 700;
-      font-size: .85rem;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      padding: .3rem .9rem;
-      border-radius: 999px;
-      margin-bottom: 1rem;
+    .title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.25rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .title-img {
+      width: 110px;
+      height: auto;
+      border-radius: 12px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 18px rgba(0,0,0,.45);
     }
     h1 {
       margin: 0 0 .5rem;
@@ -145,9 +148,11 @@
 </head>
 <body>
   <header>
-    <span class="badge">Radtour · 03.10.2026</span>
-    <h1>Tag der deutschen Grundlageneinheit</h1>
-    <p>Einmal Odenwald-Diplom zum Feiertag – alle sind eingeladen, mitzufahren!</p>
+    <div class="title-row">
+      <img class="title-img" src="assets/plakat.jpg" alt="Plakat: Tag der deutschen Grundlageneinheit">
+      <h1>Tag der deutschen Grundlageneinheit</h1>
+    </div>
+    <p>Odenwald-Diplom zum Feiertag</p>
   </header>
 
   <section class="stats">
@@ -166,8 +171,9 @@
   </div>
   <p class="hint">Maus über Karte oder Höhenprofil bewegen, um die Position in der jeweils anderen Ansicht zu sehen.</p>
 
-  <footer>
+    <footer>
     Route: <em>Odenwald-Diplom</em> · Start/Ziel: Heidelberg
+    · <a href="https://www.strava.com/activities/15478495327" target="_blank" rel="noopener">Route auf Strava</a>
     · <a href="assets/route.js">GPX-Daten (vereinfacht)</a>
   </footer>
 
@@ -193,10 +199,10 @@
 
     // Supplies / stops along the route (km values from the track)
     const WAYPOINTS = [
-      { name: 'Haribo-Stash',           km: 48.8,  lat: 49.59854, lon: 8.90079 },
-      { name: 'Odenwälder Cafestube',   km: 88.0,  lat: 49.64885, lon: 9.08085 },
-      { name: 'REWE Beerfelden',        km: 134.0, lat: 49.56951, lon: 8.97438 },
-      { name: 'Cafe Junghans',          km: 172.0, lat: 49.46423, lon: 8.76169 },
+      { name: 'Haribo-Stash',           km: 48.8,  lat: 49.60967, lon: 8.91534 },
+      { name: 'Odenwälder Cafestube',   km: 88.0,  lat: 49.6314,  lon: 9.09851 },
+      { name: 'REWE Beerfelden',        km: 134.0, lat: 49.55558, lon: 8.94336 },
+      { name: 'Cafe Junghans',          km: 172.0, lat: 49.45378, lon: 8.7572 },
     ];
     const wpList = document.getElementById('waypoints');
     WAYPOINTS.forEach(wp => {
