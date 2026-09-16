@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tag der deutschen Grundlageneinheit – Radtour 03.10.2026</title>
+  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 198,7 km und 4.024 Höhenmeter durch den Odenwald. Samstag, 3. Oktober 2026.">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root {
+      --bg: #101418;
+      --card: #1a2027;
+      --text: #e8edf2;
+      --muted: #93a1af;
+      --accent: #f2a71b;
+      --accent2: #3aa76d;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    header {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+    }
+    header .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #111;
+      font-weight: 700;
+      font-size: .85rem;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      padding: .3rem .9rem;
+      border-radius: 999px;
+      margin-bottom: 1rem;
+    }
+    h1 {
+      margin: 0 0 .5rem;
+      font-size: clamp(1.6rem, 4.5vw, 2.6rem);
+      line-height: 1.15;
+    }
+    header p { color: var(--muted); margin: 0; font-size: 1.05rem; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      max-width: 960px;
+      margin: 0 auto 2rem;
+      padding: 0 1rem;
+    }
+    .stat {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 1rem 1.25rem;
+      text-align: center;
+    }
+    .stat .value {
+      font-size: 1.7rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat .label {
+      font-size: .8rem;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--muted);
+    }
+    #map {
+      height: 55vh;
+      min-height: 340px;
+      max-width: 960px;
+      margin: 0 auto;
+      border-radius: 12px;
+      z-index: 0;
+    }
+    .profile-wrap {
+      max-width: 960px;
+      margin: 1.5rem auto 0;
+      padding: 0 1rem;
+    }
+    #profile { width: 100%; height: 140px; display: block; }
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: .85rem;
+      padding: 2rem 1rem 3rem;
+    }
+    footer a { color: var(--accent2); }
+  </style>
+</head>
+<body>
+  <header>
+    <span class="badge">Radtour · 03.10.2026</span>
+    <h1>Tag der deutschen Grundlageneinheit</h1>
+    <p>Einmal Odenwald-Diplom zum Feiertag – alle sind eingeladen, mitzufahren!</p>
+  </header>
+
+  <section class="stats">
+    <div class="stat"><div class="value" id="st-date">03.10.2026</div><div class="label">Datum (Samstag)</div></div>
+    <div class="stat"><div class="value" id="st-km">–</div><div class="label">Kilometer</div></div>
+    <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
+    <div class="stat"><div class="value" id="st-max">–</div><div class="label">Höchster Punkt</div></div>
+  </section>
+
+  <div id="map"></div>
+
+  <div class="profile-wrap">
+    <canvas id="profile" height="140"></canvas>
+  </div>
+
+  <footer>
+    Route: <em>Odenwald-Diplom</em> · Start/Ziel: Heidelberg
+    · <a href="assets/route.js">GPX-Daten (vereinfacht)</a>
+  </footer>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="assets/route.js"></script>
+  <script>
+    const S = window.ROUTE_STATS, R = window.ROUTE;
+    document.getElementById('st-km').textContent = S.km.toLocaleString('de-DE') + ' km';
+    document.getElementById('st-gain').textContent = S.gain.toLocaleString('de-DE') + ' m';
+    document.getElementById('st-max').textContent = S.maxEle.toLocaleString('de-DE') + ' m';
+
+    // Map
+    const lats = R.map(p => p[1]), lons = R.map(p => p[2]);
+    const map = L.map('map');
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 18, attribution: '&copy; OpenStreetMap-Mitwirkende'
+    }).addTo(map);
+    const line = L.polyline(R.map(p => [p[1], p[2]]), { color: '#f2a71b', weight: 3.5 }).addTo(map);
+    map.fitBounds(line.getBounds(), { padding: [24, 24] });
+    const start = R[0], end = R[R.length - 1];
+    L.marker([start[1], start[2]]).addTo(map).bindTooltip('Start / Ziel');
+    L.circleMarker([end[1], end[2]], { radius: 6, color: '#fff', fillColor: '#f2a71b', fillOpacity: 1 }).addTo(map);
+
+    // Elevation profile (plain canvas, no libs)
+    const canvas = document.getElementById('profile');
+    const dpr = window.devicePixelRatio || 1;
+    function draw() {
+      const w = canvas.clientWidth, h = 140;
+      canvas.width = w * dpr; canvas.height = h * dpr;
+      const ctx = canvas.getContext('2d');
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, w, h);
+      const pad = { t: 10, b: 22, l: 4, r: 4 };
+      const lo = S.minEle, hi = S.maxEle, span = hi - lo;
+      const gw = w - pad.l - pad.r, gh = h - pad.t - pad.b;
+      const totalKm = R[R.length - 1][0];
+      // area
+      ctx.beginPath();
+      ctx.moveTo(pad.l, pad.t + gh);
+      for (const p of R) {
+        const x = pad.l + (p[0] / totalKm) * gw;
+        const y = pad.t + gh - ((p[3] - lo) / span) * gh;
+        ctx.lineTo(x, y);
+      }
+      ctx.lineTo(pad.l + gw, pad.t + gh);
+      ctx.closePath();
+      const grad = ctx.createLinearGradient(0, pad.t, 0, pad.t + gh);
+      grad.addColorStop(0, 'rgba(58,167,109,.55)');
+      grad.addColorStop(1, 'rgba(58,167,109,.05)');
+      ctx.fillStyle = grad;
+      ctx.fill();
+      // line
+      ctx.beginPath();
+      R.forEach((p, i) => {
+        const x = pad.l + (p[0] / totalKm) * gw;
+        const y = pad.t + gh - ((p[3] - lo) / span) * gh;
+        i ? ctx.lineTo(x, y) : ctx.moveTo(x, y);
+      });
+      ctx.strokeStyle = '#3aa76d';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+      // labels
+      ctx.fillStyle = '#93a1af';
+      ctx.font = '11px system-ui, sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('0 km', pad.l, h - 6);
+      ctx.textAlign = 'right';
+      ctx.fillText(totalKm.toLocaleString('de-DE') + ' km', pad.l + gw, h - 6);
+      ctx.textAlign = 'left';
+      ctx.fillText(hi + ' m', pad.l + 2, pad.t + 8);
+    }
+    draw();
+    window.addEventListener('resize', draw);
+  </script>
+</body>
+</html>
