@@ -55,6 +55,9 @@
       letter-spacing: .12em;
       color: var(--accent);
     }
+    .eyebrow a { color: var(--accent2); text-decoration: none; }
+    .eyebrow a:hover { text-decoration: underline; }
+    .eyebrow-sub { margin-top: -.1rem; }
     header p { color: var(--muted); margin: 0; font-size: 1.05rem; }
     .stats {
       display: grid;
@@ -95,14 +98,6 @@
       padding: 0 1rem;
     }
     #profile { width: 100%; height: 140px; display: block; cursor: crosshair; }
-    .route-info {
-      text-align: center;
-      color: var(--muted);
-      font-size: .9rem;
-      margin: 0 auto 1rem;
-      padding: 0 1rem;
-    }
-    .route-info a { color: var(--accent2); }
     .hint {
       max-width: 960px;
       margin: .4rem auto 0;
@@ -168,10 +163,10 @@
       <img class="title-img" src="assets/plakat.jpg" alt="Plakat: Tag der deutschen Grundlageneinheit">
       <div>
         <p class="eyebrow">Special Edition VELOciraptors Heidelberg</p>
+        <p class="eyebrow eyebrow-sub">Odenwald-Diplom zum Feiertag · <a href="https://www.strava.com/activities/15400192021" target="_blank" rel="noopener">Strava-Aktivität</a></p>
         <h1>Tag der deutschen Grundlageneinheit</h1>
       </div>
     </div>
-    <p>Odenwald-Diplom zum Feiertag · <a href="https://www.strava.com/activities/15400192021" target="_blank" rel="noopener">Strava-Aktivität</a></p>
   </header>
 
   <section class="stats">
@@ -183,12 +178,6 @@
   </section>
 
   <div class="waypoints" id="waypoints"></div>
-
-  <p class="route-info">
-    Route: <em>Odenwald-Diplom</em> · Start/Ziel: Heidelberg
-    · <a href="https://www.strava.com/activities/15478495327" target="_blank" rel="noopener">Route auf Strava</a>
-    · <a href="assets/route.js">GPX-Daten (vereinfacht)</a>
-  </p>
 
   <div id="map"></div>
 
