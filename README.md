@@ -4,7 +4,7 @@ Werbeseite für die Radtour am **Samstag, 03.10.2026** (Tag der deutschen Grundl
 
 | Datum | Distanz | Höhenmeter | Höchster Punkt |
 |---|---|---|---|
-| 03.10.2026 | 197,9 km | 4.149 m | 572 m |
+| 03.10.2026 | 200,1 km | 4.150 m | 572 m |
 
 Die Seite zeigt die Route auf einer OpenStreetMap-Karte (Leaflet) plus Höhenprofil.
 
