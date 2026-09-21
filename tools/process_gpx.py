@@ -6,7 +6,7 @@ import json
 import sys
 
 import glob
-SRC = glob.glob("/home/frank/Downloads/Odenwald*Diplom.gpx")[0]
+SRC = sorted(glob.glob("/home/frank/Downloads/Odenwald*Diplom*.gpx"))[0]
 DST = "assets/route.js"
 MIN_STEP_M = 40.0        # keep one point every ~40 m
 ELE_NOISE_M = 2.0        # elevation gain threshold to suppress GPS noise
@@ -63,8 +63,8 @@ for lat, lon, ele in pts:
 
 km = dist / 1000.0
 stats = {
-    "km": round(km, 1),
-    "gain": round(gain),
+    "km": round(km),
+    "gain": round(gain / 10) * 10,
     "maxEle": round(max_ele),
     "minEle": round(min_ele),
     "date": "03.10.2026",
