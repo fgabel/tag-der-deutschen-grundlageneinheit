@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tag der deutschen Grundlageneinheit – Radtour 03.10.2026</title>
-  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 201 km und 4.100 Höhenmeter durch den Odenwald. Termin: 03.10.2026. Start 08:00 Uhr, ca. 8–9 h.">
+  <title>Tag der deutschen Grundlageneinheit – Radtour 27.09.2026</title>
+  <meta name="description" content="Radtour am Tag der deutschen Grundlageneinheit: 195 km und 4.000 Höhenmeter durch den Odenwald. Termin: 27.09.2026. Start 08:00 Uhr, ca. 8–9 h.">
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <style>
     :root {
@@ -183,7 +183,7 @@
   </header>
 
   <section class="stats">
-    <div class="stat"><div class="value">03.10.2026</div><div class="label">Datum</div></div>
+    <div class="stat"><div class="value">27.09.2026</div><div class="label">Datum</div></div>
     <div class="stat"><div class="value">08:00</div><div class="label">Startzeit</div></div>
     <div class="stat"><div class="value" id="st-km">–</div><div class="label">Kilometer</div></div>
     <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
@@ -257,10 +257,10 @@
 
     // Supplies / stops along the route (km values from the track)
     const WAYPOINTS = [
-      { name: 'Haribo-Stash', km: 45.8,  lat: 49.59871, lon: 8.90143 },
-      { name: 'Café BROTal',   km: 76.7,  lat: 49.65847, lon: 8.99257 },
-      { name: 'REWE',         km: 134.1, lat: 49.57029, lon: 8.97721 },
-      { name: 'Café Junghans', km: 172.0, lat: 49.46436, lon: 8.76148 },
+      { name: 'Café Marbachtal',        km: 52.3,  lat: 49.62170, lon: 8.94550 },
+      { name: 'Eutersee (Haribo-Stash)', km: 113.0, lat: 49.57270, lon: 9.07383 },
+      { name: 'Tankstelle Beerfelden',  km: 128.3, lat: 49.56510, lon: 8.97513 },
+      { name: 'Café Junghans',          km: 166.0, lat: 49.46436, lon: 8.76148 },
     ];
     const wpList = document.getElementById('waypoints');
     WAYPOINTS.forEach(wp => {

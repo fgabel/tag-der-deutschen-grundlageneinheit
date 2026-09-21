@@ -1,10 +1,10 @@
 # Tag der deutschen Grundlageneinheit 🚴
 
-Werbeseite für die Radtour am **Samstag, 03.10.2026** (Tag der deutschen Grundlageneinheit) über die Route *Odenwald-Diplom*.
+Werbeseite für die Radtour am **Sonntag, 27.09.2026** (Tag der deutschen Grundlageneinheit) über die Route *Odenwald-Diplom*.
 
 | Datum | Distanz | Höhenmeter | Höchster Punkt |
 |---|---|---|---|
-| 03.10.2026 | 201 km | 4.100 m | 572 m |
+| 27.09.2026 | 195 km | 4.000 m | 572 m |
 
 Die Seite zeigt die Route auf einer OpenStreetMap-Karte (Leaflet) plus Höhenprofil.
 
