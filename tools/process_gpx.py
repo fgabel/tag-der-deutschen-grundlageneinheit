@@ -10,6 +10,7 @@ SRC = sorted(glob.glob("/home/frank/Downloads/Odenwald*Diplom*.gpx"))[0]
 DST = "assets/route.js"
 MIN_STEP_M = 40.0        # keep one point every ~40 m
 ELE_NOISE_M = 2.0        # elevation gain threshold to suppress GPS noise
+GAIN_OVERRIDE = 4100     # displayed gain in hm (overrides computed value)
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371000.0
@@ -64,7 +65,7 @@ for lat, lon, ele in pts:
 km = dist / 1000.0
 stats = {
     "km": round(km),
-    "gain": round(gain / 10) * 10,
+    "gain": GAIN_OVERRIDE if GAIN_OVERRIDE else round(gain / 10) * 10,
     "maxEle": round(max_ele),
     "minEle": round(min_ele),
     "date": "03.10.2026",
