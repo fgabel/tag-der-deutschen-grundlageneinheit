@@ -94,7 +94,9 @@
       color: var(--muted);
     }
     .gpx-row {
-      grid-column: 1 / -1;
+      max-width: 960px;
+      margin: -.5rem auto 1.5rem;
+      padding: 0 1rem;
       text-align: center;
       font-size: .95rem;
     }
@@ -199,8 +201,9 @@
     <div class="stat"><div class="value" id="st-km">–</div><div class="label">Kilometer</div></div>
     <div class="stat"><div class="value" id="st-gain">–</div><div class="label">Höhenmeter</div></div>
     <div class="stat"><div class="value">8–9 h</div><div class="label">Fahrzeit</div></div>
-    <div class="gpx-row"><a href="assets/Odenwald-Diplom.gpx" download>⤓ GPX-Track herunterladen</a></div>
   </section>
+
+  <div class="gpx-row"><a href="assets/Odenwald-Diplom.gpx" download>⤓ GPX-Track herunterladen</a></div>
 
   <div class="waypoints" id="waypoints"></div>
 
