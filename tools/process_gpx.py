@@ -6,11 +6,11 @@ import json
 import sys
 
 import glob
-SRC = sorted(glob.glob("/home/frank/Downloads/Odenwald*Diplom*.gpx"))[0]
+SRC = "/home/frank/Downloads/Odenwald-Diplom (2).gpx"
 DST = "assets/route.js"
 MIN_STEP_M = 40.0        # keep one point every ~40 m
 ELE_NOISE_M = 2.0        # elevation gain threshold to suppress GPS noise
-GAIN_OVERRIDE = 4100     # displayed gain in hm (overrides computed value)
+GAIN_OVERRIDE = 4000     # displayed gain in hm (overrides computed value)
 
 def haversine(lat1, lon1, lat2, lon2):
     R = 6371000.0
@@ -68,7 +68,7 @@ stats = {
     "gain": GAIN_OVERRIDE if GAIN_OVERRIDE else round(gain / 10) * 10,
     "maxEle": round(max_ele),
     "minEle": round(min_ele),
-    "date": "03.10.2026",
+    "date": "27.09.2026",
     "name": "Odenwald-Diplom",
 }
 print(json.dumps(stats), f"kept {len(route)} points")
